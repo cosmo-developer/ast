@@ -1,0 +1,1 @@
+gcc ast_main.c expression.c -o ast
