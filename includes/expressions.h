@@ -5,7 +5,12 @@
 #define EMAIL "cosmoorganization@gmail.com"
 #define MAP_DATA EXP_H
 
-#define CAST_NODE(node) (struct ast_node*)node
+#define CAST_NODE(node) ((struct ast_node*)node)
+#define CAST_BIN(node)  ((struct bin_op_node*)node)
+#define CAST_NUM(node)  ((struct num_node*)node)
+#define CAST_VAR(node)  ((struct var_assign*)node)
+#define CAST_UNR(node)  ((struct unary_node*)node)
+#define CAST_VALUE(node) ((struct ast_value*)node)
 
 #define CLEAN(node) clean_visit(node)
 
@@ -71,6 +76,13 @@ struct unary_node* make_unary(struct ast_node* expr);
 struct var_assign* make_assign(const char* varname,struct ast_node* expr);
 
 void clean_visit(struct ast_node* node);
+struct ast_node* copy(struct ast_node*);
+struct ast_value* copy_val(struct ast_value*);
+#endif
+
+#ifndef EVALUATORS
+#define EVALUATORS
+struct ast_value* visit(struct ast_node*);
 #endif
 
 #endif
