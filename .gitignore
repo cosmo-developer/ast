@@ -1,4 +1,5 @@
 # Prerequisites
+
 *.d
 *.win
 *.dev
@@ -51,3 +52,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+#Custom
+*.layout
+*.dev

@@ -67,22 +67,41 @@ struct var_assign_1{short type;struct ast_node* lhand;struct ast_node* rhand;};
 struct var_assign{short type;const char* varname;struct ast_node* expr;};
 #endif
 
+#ifndef NODE_SHORT
+#define NODE_SHORT
+typedef struct ast_node* _node;
+typedef struct bin_op_node* _bon;
+typedef struct num_node* _nn;
+typedef struct unary_node* _un;
+typedef struct var_assign_1* va1;
+typedef struct var_assign* _va;
+typedef struct ast_value* _value;
+
+typedef struct ast_node node_;
+typedef struct bin_op_node bon_;
+typedef struct num_node nn_;
+typedef struct unary_node un_;
+typedef struct var_assign_1 va1_;
+typedef struct var_assign va_;
+typedef struct ast_value value_;
+#endif
+
 #ifndef MAKERS
 #define MAKERS
-struct ast_node* new_ast();
-struct bin_op_node* new_bin_op(struct ast_node* left,short _operator,struct ast_node* right);
-struct num_node* new_num(short type,int ival,float fval,double dval,short sval,char cval);
-struct unary_node* make_unary(struct ast_node* expr);
-struct var_assign* make_assign(const char* varname,struct ast_node* expr);
+_node new_ast();
+_bon new_bin_op(_node left,short _operator,_node right);
+_nn new_num(short type,int ival,float fval,double dval,short sval,char cval);
+_un make_unary(_node expr);
+_va make_assign(const char* varname,_node expr);
 
-void clean_visit(struct ast_node* node);
-struct ast_node* copy(struct ast_node*);
-struct ast_value* copy_val(struct ast_value*);
+void clean_visit(_node node);
+_node copy(_node);
+_value copy_val(_value);
 #endif
 
 #ifndef EVALUATORS
 #define EVALUATORS
-struct ast_value* visit(struct ast_node*);
+_value visit(_node);
 #endif
 
 #endif

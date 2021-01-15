@@ -1,14 +1,14 @@
 #include "map.h"
 #include EXP_H
 #include <stdlib.h>
-struct ast_node* new_ast(){
-	struct ast_node* node=CAST_NODE(malloc(sizeof(struct ast_node)));
+_node new_ast(){
+	_node node=CAST_NODE(malloc(sizeof(node_)));
 	node->type=DEFAULT;
 	return node;
 }
 
-struct bin_op_node* new_bin_op(struct ast_node* left,short _operator,struct ast_node* right){
-	struct bin_op_node* node=CAST_BIN(malloc(sizeof(struct bin_op_node)));
+_bon new_bin_op(_node left,short _operator,_node right){
+	_bon node=CAST_BIN(malloc(sizeof(bon_)));
 	node->type=BIN;
 	node->left=left;
 	node->_operator=_operator;
@@ -16,9 +16,9 @@ struct bin_op_node* new_bin_op(struct ast_node* left,short _operator,struct ast_
 	return node;
 }
 
-struct num_node* new_num(short type,int ival,float fval,double dval,short sval,char cval){
-	struct num_node* node=CAST_NUM(malloc(sizeof(struct num_node)));
-	struct ast_value* val=CAST_VALUE(malloc(sizeof(struct ast_value)));
+_nn new_num(short type,int ival,float fval,double dval,short sval,char cval){
+	_nn node=CAST_NUM(malloc(sizeof(nn_)));
+	_value val=CAST_VALUE(malloc(sizeof(value_)));
 	switch(type){
 		case FLOAT:
 			node->type=NUM;
@@ -42,20 +42,20 @@ struct num_node* new_num(short type,int ival,float fval,double dval,short sval,c
 	return node;
 }
 
-struct var_assign* make_assign(const char* varname,struct ast_node* expr){
-	struct var_assign* node=CAST_VAR(malloc(sizeof(struct var_assign)));
+_va make_assign(const char* varname,_node expr){
+	_va node=CAST_VAR(malloc(sizeof(va_)));
 	node->expr=expr;
 	node->type=VA;
 	node->varname=varname;
 }
 
-struct unary_node* make_unary(struct ast_node* expr){
-	struct unary_node* node=CAST_UNR(malloc(sizeof(struct unary_node)));
+_un make_unary(_node expr){
+	_un node=CAST_UNR(malloc(sizeof(un_)));
 	node->expr=expr;
 	node->type=UNARY;
 }
 
-void clean_visit(struct ast_node* node){
+void clean_visit(_node node){
 	switch(node->type){
 		case 0:
 			free(node);
@@ -82,11 +82,11 @@ void clean_visit(struct ast_node* node){
 
 //visit models
 
-struct ast_value* visit_bin(struct bin_op_node*);
-struct ast_value* visit_unary(struct unary_node*);
-struct ast_value* visit_num(struct num_node*);
+_value visit_bin(_bon);
+_value visit_unary(_un);
+_value visit_num(_nn);
 
-struct ast_value* visit(struct ast_node* node){
+_value visit(_node node){
 	if (node ==  NULL)exit(-1);
 	switch(node->type){
 		case BIN:
@@ -97,10 +97,10 @@ struct ast_value* visit(struct ast_node* node){
 			return visit_num(CAST_NUM(node));
 	}
 }
-struct ast_value* visit_bin(struct bin_op_node* node){
-	struct ast_value* lvalue=visit(node->left);
-	struct ast_value* rvalue=visit(node->right);
-	struct ast_value* result=CAST_VALUE(malloc(sizeof(struct ast_value)));
+_value visit_bin(_bon node){
+	_value lvalue=visit(node->left);
+	_value rvalue=visit(node->right);
+	_value result=CAST_VALUE(malloc(sizeof(value_)));
 	switch(node->_operator){
 		case ADD:
 			result->type=DOUBLE;
@@ -121,25 +121,25 @@ struct ast_value* visit_bin(struct bin_op_node* node){
 	}
 	return result;
 }
-struct ast_value* visit_unary(struct unary_node* node){
-	struct ast_value* result=CAST_VALUE(malloc(sizeof(struct ast_value)));
-	struct ast_value* previous=visit(CAST_NODE(node));
+_value visit_unary(_un node){
+	_value result=CAST_VALUE(malloc(sizeof(value_)));
+	_value previous=visit(CAST_NODE(node));
 	result->type=DOUBLE;
 	result->value.dval=-previous->value.dval;
 	return result;
 }
-struct ast_value* visit_num(struct num_node* node){
+_value visit_num(_nn node){
 	return copy_val(node->value);
 }
-struct ast_node* copy(struct ast_node* node){
+_node copy(_node node){
 	switch(node->type){
 		case DEFAULT:{
-			struct ast_node* newnode=CAST_NODE(malloc(sizeof(struct ast_node)));
+			_node newnode=CAST_NODE(malloc(sizeof(node_)));
 			newnode->type=node->type;
 			return newnode;
 		}
 		case BIN:{
-			struct bin_op_node* newnode=CAST_BIN(malloc(sizeof(struct bin_op_node)));
+			_bon newnode=CAST_BIN(malloc(sizeof(bon_)));
 			newnode->left=copy(CAST_BIN(node)->left);
 			newnode->right=copy(CAST_BIN(node)->right);
 			newnode->type=node->type;
@@ -147,21 +147,21 @@ struct ast_node* copy(struct ast_node* node){
 			return CAST_NODE(newnode);
 		}
 		case NUM:{
-			struct num_node* newnode=CAST_NUM(malloc(sizeof(struct num_node)));
+			_nn newnode=CAST_NUM(malloc(sizeof(nn_)));
 			newnode->type=node->type;
 			newnode->value=copy_val(CAST_NUM(node)->value);
 			return CAST_NODE(newnode);
 		}
 		case UNARY:{
-			struct unary_node* newnode=CAST_UNR(malloc(sizeof(struct unary_node)));
+			_un newnode=CAST_UNR(malloc(sizeof(un_)));
 			newnode->type=node->type;
 			newnode->expr=copy(CAST_UNR(node)->expr);
 			return CAST_NODE(newnode);
 		}
 	}
 }
-struct ast_value* copy_val(struct ast_value* val){
-	struct ast_value* newvalue=CAST_VALUE(malloc(sizeof(struct ast_value)));
+_value copy_val(_value val){
+	_value newvalue=CAST_VALUE(malloc(sizeof(value_)));
 	switch(val->type){
 		case DOUBLE:
 			newvalue->type=DOUBLE;
