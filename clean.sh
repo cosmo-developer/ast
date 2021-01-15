@@ -1,0 +1,2 @@
+rm bin/*.*
+rmdir bin
